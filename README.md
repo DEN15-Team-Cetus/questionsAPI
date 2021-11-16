@@ -1,2 +1,2 @@
-# reviewssAPI
+# reviewsAPI
 Ratings and Reviews API
