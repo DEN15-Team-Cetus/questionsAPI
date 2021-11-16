@@ -1,2 +1,2 @@
-# questionsAPI
-Questions and Answers API
+# reviewssAPI
+Ratings and Reviews API
