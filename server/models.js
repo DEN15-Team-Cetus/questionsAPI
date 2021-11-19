@@ -13,8 +13,6 @@ client.connect()
 
 
 const getReviews = (req, callback) => {
-  console.log(req.query);
-
   const { page, count, sort, product_id } = req.query;
   var queryStr = `SELECT *, 
                    (
@@ -23,7 +21,6 @@ const getReviews = (req, callback) => {
                  FROM reviews WHERE product_id = ${product_id}
                  LIMIT ${count || 5}`;
     client.query(queryStr, (err, results) => {
-      console.log(results);
       callback(err, {
         product: product_id,
         page: page || 1,
