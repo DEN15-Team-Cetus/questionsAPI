@@ -36,7 +36,7 @@ DELIMITER ','
 CSV HEADER;
 
 CREATE TABLE reviews (
-  id SERIAL PRIMARY KEY,
+  review_id SERIAL PRIMARY KEY,
   product_id INT,
   rating INT,
   date BIGINT,
