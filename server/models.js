@@ -14,6 +14,17 @@ client.connect()
 
 const getReviews = (req, callback) => {
   var { page, count, sort, product_id } = req.query;
+  var sortby;
+  if (sort === 'newest') {
+    sortby = 'date';
+  }
+  if (sort === 'helpful') {
+    sortby = 'helpfulness';
+  }
+  if (sort === 'relevant') {
+    sortby = 'helpfulness';
+  }
+  //console.log('sortby: ', sortby);
   count = count || 5;
   page = page || 1;
   const offset = page * count - count;
@@ -24,15 +35,11 @@ const getReviews = (req, callback) => {
                     AS Photos FROM reviews_photos WHERE review_id = reviews.review_id                  
                    ) 
                  FROM reviews WHERE product_id = $1
+                 ORDER BY $2 ASC
                  OFFSET $3
-                 LIMIT $2`;
-    client.query(queryStr, [product_id, count, offset], (err, results) => {
-      callback(err, {
-        product: product_id,
-        page: page,
-        count: count,
-        results: results.rows
-      });
+                 LIMIT $4`;
+    client.query(queryStr, [product_id, sortby, offset, count], (err, results) => {
+      callback(err, results);
     })
 }
 

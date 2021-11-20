@@ -1,12 +1,22 @@
 const models = require('./models.js')
 
 const handleReviewsGetRequest = (req, res) => {
-  models.getReviews(req, (err, results) => {
+  var { page, count, sort, product_id } = req.query;
+  models.getReviews(req, (err, results) => { 
     if (err) {
       console.error('Unable to retrieve reviews from the database: ', err);
-      res.sendStatus(500);
+      res.statusCode = 500;
+      res.send(err);
     } else {
-      res.json(results);
+      results.rows.map(row => {
+        row.date = new Date(Number(row.date));
+      });
+      res.json({
+        product: product_id,
+        page: page,
+        count: count,
+        results: results.rows
+      });
     }
   });
 };
