@@ -4,7 +4,7 @@ const handleReviewsGetRequest = (req, res) => {
   var { page, count, sort, product_id } = req.query;
   count = count || 5;
   page = page || 1;
-  
+
   models.getReviews(req, (err, results) => { 
     if (err) {
       console.error('Unable to retrieve reviews from the database: ', err);
@@ -25,7 +25,15 @@ const handleReviewsGetRequest = (req, res) => {
 };
 
 const handleMetaGetRequest = (req, res) => {
-  
+  models.getMetaData(req.query, (err, results) => {
+    if (err) {
+      console.error('Unable to retrieve meta data from the database: ', err);
+      res.statusCode = 500;
+      res.send(err);
+    } else {
+      res.json(results);
+    }
+  })
 };
 
 const handlePostRequest = (req, res) => {

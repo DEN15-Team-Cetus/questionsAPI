@@ -36,8 +36,12 @@ const getReviews = (req, callback) => {
   })
 }
 
-const getMetaData = (callback) => {
-
+const getMetaData = ({ product_id }, callback) => {
+  var queryStr = `SELECT * FROM characteristics WHERE product_id = $1 LIMIT 5`;
+  client
+    .query(queryStr, [product_id])
+    .then(res => { callback(null, res); })
+    .catch(err => console.error(err))
 }
 
 const postReview = (callback) => {
