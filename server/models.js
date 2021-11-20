@@ -15,8 +15,8 @@ client.connect()
 const getReviews = (req, callback) => {
   var { page, count, sort, product_id } = req.query;
   count = count || 5;
-  
-  const offset = (page || 1) * (count || 5) - (count || 5);
+  page = page || 1;
+  const offset = page * count - count;
   var queryStr = `SELECT *, 
                    (
                     SELECT 
@@ -26,11 +26,11 @@ const getReviews = (req, callback) => {
                  FROM reviews WHERE product_id = $1
                  OFFSET $3
                  LIMIT $2`;
-    client.query(queryStr, [product_id, (count || 5), offset], (err, results) => {
+    client.query(queryStr, [product_id, count, offset], (err, results) => {
       callback(err, {
         product: product_id,
-        page: page || 1,
-        count: count || 5,
+        page: page,
+        count: count,
         results: results.rows
       });
     })
