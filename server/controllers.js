@@ -2,6 +2,9 @@ const models = require('./models.js')
 
 const handleReviewsGetRequest = (req, res) => {
   var { page, count, sort, product_id } = req.query;
+  count = count || 5;
+  page = page || 1;
+  
   models.getReviews(req, (err, results) => { 
     if (err) {
       console.error('Unable to retrieve reviews from the database: ', err);
