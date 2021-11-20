@@ -13,14 +13,20 @@ client.connect()
 
 
 const getReviews = (req, callback) => {
-  const { page, count, sort, product_id } = req.query;
+  var { page, count, sort, product_id } = req.query;
+  count = count || 5;
+  
+  const offset = (page || 1) * (count || 5) - (count || 5);
   var queryStr = `SELECT *, 
                    (
-                    SELECT coalesce (json_agg(json_build_object('id', id, 'url', url)), '[]'::json) AS Photos FROM reviews_photos WHERE review_id = reviews.review_id                  
+                    SELECT 
+                      coalesce (json_agg(json_build_object('id', id, 'url', url)), '[]'::json) 
+                    AS Photos FROM reviews_photos WHERE review_id = reviews.review_id                  
                    ) 
-                 FROM reviews WHERE product_id = ${product_id}
-                 LIMIT ${count || 5}`;
-    client.query(queryStr, (err, results) => {
+                 FROM reviews WHERE product_id = $1
+                 OFFSET $3
+                 LIMIT $2`;
+    client.query(queryStr, [product_id, (count || 5), offset], (err, results) => {
       callback(err, {
         product: product_id,
         page: page || 1,
