@@ -37,11 +37,19 @@ const getReviews = (req, callback) => {
 }
 
 const getMetaData = ({ product_id }, callback) => {
-  var queryStr = `SELECT * FROM characteristics WHERE product_id = $1 LIMIT 5`;
+  var queryStr = `SELECT json_build_object(
+                    'product_id', CAST (${product_id} AS TEXT), 
+                    'ratings', 
+                    (SELECT json_object_agg(rating, CAST(count AS TEXT)) FROM ratings WHERE product_id = $1),
+                    'recommended',
+                    (SELECT json_object_agg(recommend, CAST(count AS TEXT)) FROM recommended WHERE product_id = $1),
+                    'characteristics',
+                    (SELECT json_object_agg(name, json_build_object('id', id, 'value', CAST(value AS TEXT))) FROM agg_char_table WHERE product_id = $1)
+                  )`;
   client
     .query(queryStr, [product_id])
     .then(res => { callback(null, res); })
-    .catch(err => console.error(err))
+    .catch(err => { callback(err); })
 }
 
 const postReview = (callback) => {

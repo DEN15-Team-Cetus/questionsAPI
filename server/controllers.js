@@ -31,7 +31,7 @@ const handleMetaGetRequest = (req, res) => {
       res.statusCode = 500;
       res.send(err);
     } else {
-      res.json(results);
+      res.json(results.rows[0].json_build_object);
     }
   })
 };

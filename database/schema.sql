@@ -53,3 +53,28 @@ CREATE TABLE reviews (
 COPY reviews FROM '/Users/matthewdowell/Documents/Immersive/reviewsAPI/data/reviews.csv'
 DELIMITER ','
 CSV HEADER;
+
+CREATE TABLE ratings 
+AS SELECT product_id, rating, count(rating) 
+FROM reviews 
+GROUP BY product_id, rating;
+
+CREATE TABLE recommended
+AS SELECT product_id, recommend, count(recommend)
+FROM reviews
+GROUP BY product_id, recommend;
+
+CREATE TABLE agg_characteristics 
+AS SELECT id, product_id, characteristics.name
+FROM characteristics;
+
+ALTER TABLE ratings ADD COLUMN id SERIAL PRIMARY KEY;
+ALTER TABLE recommended ADD COLUMN id SERIAL PRIMARY KEY;
+ALTER TABLE agg_characteristics ADD COLUMN value INT;
+
+SELECT a.id, a.product_id, a.name, AVG(c.value) AS value
+  INTO agg_char_table
+  FROM agg_characteristics AS a
+  JOIN characteristic_reviews as c
+    ON a.id = c.characteristic_id
+ GROUP BY a.id, a.product_id, a.name;
