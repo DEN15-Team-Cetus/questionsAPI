@@ -52,8 +52,31 @@ const getMetaData = ({ product_id }, callback) => {
     .catch(err => { callback(err); })
 }
 
-const postReview = (callback) => {
-
+const postReview = (req, callback) => {
+  console.log('post request: ', req);
+  let { product_id, rating, summary, body, recommend, name, email, photos, characteristics } = req;
+  console.log('photos: ', JSON.stringify(photos).split('\"').join('\''))
+  photos = JSON.stringify(photos).split('\"').join('\'');
+  var queryStr = `INSERT INTO reviews (
+                    product_id,
+                    rating,
+                    date,
+                    summary,
+                    body,
+                    recommend,
+                    reviewer_name,
+                    reviewer_email
+                  )
+                  VALUES (
+                    $1, $2, (select round( date_part( 'epoch', now() ) ) * 1000), $3, $4, $5, $6, $7
+                  )`;
+  client
+    .query(queryStr, [product_id, rating, summary, body, recommend, name, email]);
+  client
+    .query(`INSERT INTO reviews_photos (review_id, url) 
+    VALUES ((SELECT (MAX("review_id")) FROM "reviews"), UNNEST(ARRAY${photos}))`)
+    .then(res => { callback(null, res); })
+    .catch(err => { callback(err); })
 }
 
 const markReviewAsHelpful = (callback) => {

@@ -78,3 +78,9 @@ SELECT a.id, a.product_id, a.name, AVG(c.value) AS value
   JOIN characteristic_reviews as c
     ON a.id = c.characteristic_id
  GROUP BY a.id, a.product_id, a.name;
+
+SELECT SETVAL((SELECT PG_GET_SERIAL_SEQUENCE('"reviews"', 'review_id')), (SELECT (MAX("review_id") + 1) FROM "reviews"), FALSE);
+SELECT SETVAL((SELECT PG_GET_SERIAL_SEQUENCE('"reviews_photos"', 'id')), (SELECT (MAX("id") + 1) FROM "reviews_photos"), FALSE);
+
+insert into reviews (product_id) values (5);
+insert into reviews_photos (review_id, url) values ((SELECT (MAX("review_id")) FROM "reviews"), UNNEST(ARRAY['foobar', 'ayoo']));

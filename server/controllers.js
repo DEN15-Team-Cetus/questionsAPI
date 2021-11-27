@@ -37,7 +37,15 @@ const handleMetaGetRequest = (req, res) => {
 };
 
 const handlePostRequest = (req, res) => {
-  
+  models.postReview(req.body, (err, results) => {
+    if (err) {
+      console.error('Unable to post review: ', err);
+      res.statusCode = 500;
+      res.send(err);
+    } else {
+      res.sendStatus(201);
+    }
+  })
 };
 
 const handlePutToHelpful = (req, res) => {
