@@ -83,6 +83,23 @@ SELECT SETVAL((SELECT PG_GET_SERIAL_SEQUENCE('"reviews"', 'review_id')), (SELECT
 SELECT SETVAL((SELECT PG_GET_SERIAL_SEQUENCE('"reviews_photos"', 'id')), (SELECT (MAX("id") + 1) FROM "reviews_photos"), FALSE);
 SELECT SETVAL((SELECT PG_GET_SERIAL_SEQUENCE('"characteristic_reviews"', 'id')), (SELECT (MAX("id") + 1) FROM "characteristic_reviews"), FALSE);
 
+CREATE INDEX idx_product_id
+ON reviews (product_id);
+
+CREATE INDEX idx_review_id
+ON reviews_photos (review_id);
+
+CREATE INDEX agg_idx_product_id
+ON agg_char_table (product_id);
+
+CREATE INDEX ratings_idx_product_id
+ON ratings (product_id);
+
+CREATE INDEX recommended_idx_product_id
+ON recommended (product_id);
+
+CREATE INDEX reviews_idx_review_id
+ON reviews (review_id);
 
 -- UPDATE agg_char_table
 -- SET product_id = 6, name = (SELECT name from ) ,value = AVG()
