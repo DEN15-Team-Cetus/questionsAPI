@@ -81,6 +81,9 @@ SELECT a.id, a.product_id, a.name, AVG(c.value) AS value
 
 SELECT SETVAL((SELECT PG_GET_SERIAL_SEQUENCE('"reviews"', 'review_id')), (SELECT (MAX("review_id") + 1) FROM "reviews"), FALSE);
 SELECT SETVAL((SELECT PG_GET_SERIAL_SEQUENCE('"reviews_photos"', 'id')), (SELECT (MAX("id") + 1) FROM "reviews_photos"), FALSE);
+SELECT SETVAL((SELECT PG_GET_SERIAL_SEQUENCE('"characteristic_reviews"', 'id')), (SELECT (MAX("id") + 1) FROM "characteristic_reviews"), FALSE);
 
-insert into reviews (product_id) values (5);
-insert into reviews_photos (review_id, url) values ((SELECT (MAX("review_id")) FROM "reviews"), UNNEST(ARRAY['foobar', 'ayoo']));
+
+-- UPDATE agg_char_table
+-- SET product_id = 6, name = (SELECT name from ) ,value = AVG()
+-- WHERE product_id = 6;

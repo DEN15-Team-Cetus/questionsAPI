@@ -55,8 +55,12 @@ const getMetaData = ({ product_id }, callback) => {
 const postReview = (req, callback) => {
   console.log('post request: ', req);
   let { product_id, rating, summary, body, recommend, name, email, photos, characteristics } = req;
-  console.log('photos: ', JSON.stringify(photos).split('\"').join('\''))
   photos = JSON.stringify(photos).split('\"').join('\'');
+  characteristicIds = JSON.stringify(Object.keys(characteristics)).split('\"').join('');
+  characteristicValues = JSON.stringify(Object.values(characteristics));
+  console.log('ids: ', characteristicIds);
+  console.log('values: ', characteristicValues);
+
   var queryStr = `INSERT INTO reviews (
                     product_id,
                     rating,
@@ -74,17 +78,33 @@ const postReview = (req, callback) => {
     .query(queryStr, [product_id, rating, summary, body, recommend, name, email]);
   client
     .query(`INSERT INTO reviews_photos (review_id, url) 
-    VALUES ((SELECT (MAX("review_id")) FROM "reviews"), UNNEST(ARRAY${photos}))`)
+            VALUES ((SELECT (MAX("review_id")) FROM "reviews"), UNNEST(ARRAY${photos}))`)
+  client
+    .query(`INSERT INTO characteristic_reviews (review_id, characteristic_id, value)
+            VALUES ((SELECT (MAX("review_id")) 
+            FROM "reviews"), UNNEST(ARRAY${characteristicIds}), UNNEST(ARRAY${characteristicValues}))`)
     .then(res => { callback(null, res); })
     .catch(err => { callback(err); })
 }
 
-const markReviewAsHelpful = (callback) => {
-
+const markReviewAsHelpful = (review_id, callback) => {
+  var queryStr = `UPDATE reviews
+  SET helpfulness = Coalesce(helpfulness, 0) + 1
+  WHERE review_id = $1;`;
+  client
+    .query(queryStr, [review_id])
+    .then(res => { callback(null, res); })
+    .catch(err => { callback(err); })
 }
 
-const reportReview = (callback) => {
-
+const reportReview = (review_id, callback) => {
+  var queryStr = `UPDATE reviews
+  SET reported = NOT Coalesce(reported, false)
+  WHERE review_id = $1;`;
+  client
+    .query(queryStr, [review_id])
+    .then(res => { callback(null, res); })
+    .catch(err => { callback(err); })
 }
 
 module.exports = {

@@ -49,11 +49,27 @@ const handlePostRequest = (req, res) => {
 };
 
 const handlePutToHelpful = (req, res) => {
-  
+  models.markReviewAsHelpful(req.params.review_id, (err, results) => {
+    if (err) {
+      console.error('Unable to mark review as helpful: ', err);
+      res.statusCode = 500;
+      res.send(err);
+    } else {
+      res.sendStatus(200);
+    }
+  })
 };
 
 const handlePutToReport = (req, res) => {
-  
+  models.reportReview(req.params.review_id, (err, results) => {
+    if (err) {
+      console.error('Unable to report review: ', err);
+      res.statusCode = 500;
+      res.send(err);
+    } else {
+      res.sendStatus(200);
+    }
+  })
 };
 
 module.exports = {
