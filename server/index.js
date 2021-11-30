@@ -7,6 +7,6 @@ app.use(express.json());
 
 app.use('/reviews', router); 
 
-app.listen('1234', () => {
-  console.log('listening on 1234')
+app.listen('3000', () => {
+  console.log('listening on 3000')
 });
